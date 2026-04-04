@@ -65,7 +65,7 @@ const data = [
 ['#','#','#','#','#','#','#','#','#','#','#','#','#','г','#','#','о','#'],
 ['#','#','#','#','#','#','#','#','#','#','#','#','#','#','#','#','с','#'],
 ['#','#','#','#','#','#','#','#','#','#','#','#','#','#','#','#','ф','#'],
-['#','#','#','#','#','#','#','#','#','#','#','#','м','#','#','#','е','#'],
+['#','#','#','#','#','#','#','#','#','#','#','#','#','м','#','#','е','#'],
 ['#','#','#','#','#','#','#','#','#','#','#','#','т','у','н','д','р','а'],
 ['#','#','#','#','#','#','#','#','#','#','#','#','#','с','#','#','а','#'],
 ['#','#','#','#','#','#','#','#','#','#','#','#','#','о','#','#','#','#'],
@@ -75,8 +75,9 @@ const data = [
 const grid = document.getElementById("grid");
 let inputs = [];
 
-data.forEach(row => {
-  row.forEach(cell => {
+
+data.forEach((row, rowIndex) => {
+  row.forEach((cell, colIndex) => {
     if (cell === '#') {
       const div = document.createElement("div");
       div.className = "cell block";
@@ -86,9 +87,35 @@ data.forEach(row => {
       const input = document.createElement("input");
       input.maxLength = 1;
       input.className = "cell";
+      
+      // Зберігаємо координати прямо в об'єкті інпуту для зручності
+      input.dataset.row = rowIndex;
+      input.dataset.col = colIndex;
 
       input.addEventListener("input", () => {
         input.value = input.value.toUpperCase();
+        
+        if (input.value.length === 1) {
+          const r = parseInt(input.dataset.row);
+          const c = parseInt(input.dataset.col);
+
+          // 1. Перевіряємо клітинку праворуч (той же рядок, наступна колонка)
+          let nextRow = r;
+          let nextCol = c + 1;
+          let nextIndex = nextRow * 18 + nextCol;
+
+          // Якщо праворуч стіна або кінець поля, перевіряємо клітинку знизу
+          if (nextCol >= 18 || data[nextRow][nextCol] === '#') {
+            nextRow = r + 1;
+            nextCol = c;
+            nextIndex = nextRow * 18 + nextCol;
+          }
+
+          // Якщо знайшли куди йти і там не блок '#' — фокусуємося
+          if (nextRow < data.length && nextCol < 18 && inputs[nextIndex]) {
+            inputs[nextIndex].focus();
+          }
+        }
       });
 
       grid.appendChild(input);
@@ -96,7 +123,6 @@ data.forEach(row => {
     }
   });
 });
-
 function check() {
   let i = 0;
   let allCorrect = true; // Припускаємо, що все вірно
@@ -128,6 +154,8 @@ function check() {
     alert("Вітаю! Ти красава! 🎉");
   }
 }
+
+
 
 
 </script>
