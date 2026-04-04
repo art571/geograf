@@ -1,0 +1,32 @@
+body {
+  background-color: chocolate;
+  margin: 0;
+  text-align: center;
+}
+
+nav {
+  background-color: brown;
+  display: flex;
+  justify-content: center; /* по центру */
+  flex-wrap: wrap; /* дозволяє перенос */
+}
+
+a {
+  color: white;
+  margin: 10px;
+  text-decoration: none;
+  font-size: 18px;
+}
+
+/* 📱 Для телефонів */
+@media (max-width: 600px) {
+  nav {
+    flex-direction: column; /* в стовпчик */
+    align-items: center;
+  }
+
+  a {
+    font-size: 16px;
+    margin: 8px 0;
+  }
+}

@@ -1,0 +1,136 @@
+<!DOCTYPE html>
+<html lang="uk">
+<head>
+<meta charset="UTF-8">
+<title>Кросворд</title>
+
+<style>
+body {
+  font-family: Arial;
+  text-align: center;
+  background: #eee;
+}
+
+.grid {
+  display: grid;
+  grid-template-columns: repeat(18, 40px);
+  gap: 2px;
+  justify-content: center;
+  margin-top: 20px;
+}
+
+.cell {
+  width: 40px;
+  height: 40px;
+  text-align: center;
+  font-size: 20px;
+  text-transform: uppercase;
+}
+
+.block {
+  background:none;
+}
+
+button {
+  margin-top: 20px;
+  padding: 10px 30px;
+  font-size: 18px;
+}
+</style>
+</head>
+
+<body>
+
+<h2>Кросворд 🌍</h2>
+
+<div class="grid" id="grid"></div>
+
+<button onclick="check()">Перевірити</button>
+
+<script>
+
+const data = [
+['А','м','е','р','и','к','а','#','р','е','л','ь','є','ф','#','#','#','#'],
+['р','#','#','#','#','#','#','#','#','#','і','#','#','#','#','#','#','#'],
+['г','#','#','#','#','#','#','#','#','#','т','#','#','#','#','#','#','#'],
+['е','к','в','а','т','о','р','#','#','#','о','#','#','#','#','#','#','#'],
+['н','#','#','#','#','#','і','#','#','#','с','а','в','а','н','а','#','#'],
+['т','#','#','#','#','#','ч','#','#','#','ф','#','#','#','і','#','#','#'],
+['и','#','#','#','#','#','к','#','#','#','е','#','#','#','л','#','#','#'],
+['н','#','#','#','#','#','а','#','#','#','р','#','#','#','#','#','#','#'],
+['а','#','#','#','#','#','#','#','#','#','а','й','с','б','е','р','г','#'],
+['#','#','#','#','#','#','#','#','#','#','#','#','#','е','#','#','і','#'],
+['#','#','#','#','#','#','#','#','#','#','#','#','#','р','#','#','д','#'],
+['#','#','#','#','#','#','#','#','#','#','#','#','#','е','#','#','р','#'],
+['#','#','#','#','#','#','#','#','#','#','#','#','#','г','#','#','о','#'],
+['#','#','#','#','#','#','#','#','#','#','#','#','#','#','#','#','с','#'],
+['#','#','#','#','#','#','#','#','#','#','#','#','#','#','#','#','ф','#'],
+['#','#','#','#','#','#','#','#','#','#','#','#','м','#','#','#','е','#'],
+['#','#','#','#','#','#','#','#','#','#','#','#','т','у','н','д','р','а'],
+['#','#','#','#','#','#','#','#','#','#','#','#','#','с','#','#','а','#'],
+['#','#','#','#','#','#','#','#','#','#','#','#','#','о','#','#','#','#'],
+['#','#','#','#','#','#','#','#','ц','и','к','л','о','н','#','#','#','#']
+];
+
+const grid = document.getElementById("grid");
+let inputs = [];
+
+data.forEach(row => {
+  row.forEach(cell => {
+    if (cell === '#') {
+      const div = document.createElement("div");
+      div.className = "cell block";
+      grid.appendChild(div);
+      inputs.push(null);
+    } else {
+      const input = document.createElement("input");
+      input.maxLength = 1;
+      input.className = "cell";
+
+      input.addEventListener("input", () => {
+        input.value = input.value.toUpperCase();
+      });
+
+      grid.appendChild(input);
+      inputs.push(input);
+    }
+  });
+});
+
+function check() {
+  let i = 0;
+  let allCorrect = true; // Припускаємо, що все вірно
+
+  data.forEach(row => {
+    row.forEach(cell => {
+      if (cell !== '#') {
+        const userInput = inputs[i].value.toUpperCase();
+        const correctLetter = cell.toUpperCase();
+
+        if (userInput === correctLetter) {
+          inputs[i].style.background = "lightgreen";
+        } else {
+          inputs[i].style.background = "salmon";
+          allCorrect = false; // Якщо хоч одна літера невірна
+        }
+        
+        // Додаткова перевірка на порожнє поле
+        if (userInput === "") {
+          allCorrect = false;
+        }
+      }
+      i++;
+    });
+  });
+
+  // Якщо після перевірки всіх клітинок помилок немає
+  if (allCorrect) {
+    alert("Вітаю! Ти красава! 🎉");
+  }
+}
+
+
+</script>
+
+</body>
+</html>
