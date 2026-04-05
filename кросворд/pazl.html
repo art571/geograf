@@ -7,6 +7,50 @@
 
 <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
 <script src="https://code.jquery.com/ui/1.13.2/jquery-ui.min.js"></script>
+<style>
+    body {
+        margin: 0;
+        font-family: Arial, sans-serif;
+    }
+
+    .back-btn {
+        position: fixed;
+        top: 15px;
+        left: 15px;
+        padding: 10px 18px;
+        font-size: 16px;
+        background-color: #007bff;
+        color: white;
+        border: none;
+        border-radius: 10px;
+        cursor: pointer;
+        transition: 0.3s;
+        z-index: 1000;
+    }
+
+    .back-btn:hover {
+        background-color: #0056b3;
+    }
+
+    /* Адаптив */
+    @media (max-width: 600px) {
+        .back-btn {
+            padding: 8px 14px;
+            font-size: 14px;
+        }
+    }
+</style>
+</head>
+
+<body>
+
+<button class="back-btn" onclick="goBack()">← Назад</button>
+
+<script>
+function goBack() {
+    window.history.back();
+}
+</script>
 
 <style>
 body {
