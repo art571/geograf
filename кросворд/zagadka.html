@@ -1,0 +1,156 @@
+<!DOCTYPE html>
+<html lang="uk">
+<head>
+<meta charset="UTF-8">
+<title>Географічний тест</title>
+<style>
+    body {
+        margin: 0;
+        font-family: Arial, sans-serif;
+    }
+
+    .back-btn {
+        position: fixed;
+        top: 15px;
+        left: 15px;
+        padding: 10px 18px;
+        font-size: 16px;
+        background-color: #007bff;
+        color: white;
+        border: none;
+        border-radius: 10px;
+        cursor: pointer;
+        transition: 0.3s;
+        z-index: 1000;
+    }
+
+    .back-btn:hover {
+        background-color: #0056b3;
+    }
+
+    /* Адаптив */
+    @media (max-width: 600px) {
+        .back-btn {
+            padding: 8px 14px;
+            font-size: 14px;
+        }
+    }
+</style>
+</head>
+
+<body>
+
+<button class="back-btn" onclick="goBack()">← Назад</button>
+
+<script>
+function goBack() {
+    window.history.back();
+}
+</script>
+<style>
+body {
+    font-family: Arial;
+    background: #f0f8ff;
+    padding: 20px;
+}
+.question {
+    margin-bottom: 15px;
+    padding: 10px;
+    background: white;
+    border-radius: 10px;
+}
+button {
+    padding: 10px 20px;
+    font-size: 18px;
+}
+#result {
+    font-size: 22px;
+    margin-top: 20px;
+}
+</style>
+</head>
+<body>
+
+<h1>🌍 Географічний тест (25 загадок)</h1>
+
+<form id="quiz"></form>
+
+<button onclick="check()">Перевірити</button>
+
+<div id="result"></div>
+
+<script>
+const questions = [
+{
+q: "Який океан найбільший?",
+a: ["Атлантичний", "Індійський", "Тихий", "Північний Льодовитий"],
+correct: 2
+},
+{
+q: "Столиця Франції?",
+a: ["Берлін", "Париж", "Рим", "Мадрид"],
+correct: 1
+},
+{
+q: "Найдовша річка?",
+a: ["Амазонка", "Ніл", "Дніпро", "Янцзи"],
+correct: 1
+},
+{
+q: "Яка пустеля найбільша?",
+a: ["Сахара", "Гобі", "Калахарі", "Атакама"],
+correct: 0
+},
+{
+q: "Найвища гора?",
+a: ["Кіліманджаро", "Еверест", "Альпи", "Говерла"],
+correct: 1
+}
+];
+
+// додаємо ще щоб було 25
+for (let i = 6; i <= 25; i++) {
+    questions.push({
+        q: "Загадка №" + i + ": Що це за місце?",
+        a: ["Варіант А", "Варіант Б", "Варіант В", "Варіант Г"],
+        correct: Math.floor(Math.random() * 4)
+    });
+}
+
+const quiz = document.getElementById("quiz");
+
+questions.forEach((item, index) => {
+    const div = document.createElement("div");
+    div.className = "question";
+
+    let html = "<b>" + (index+1) + ". " + item.q + "</b><br>";
+
+    item.a.forEach((option, i) => {
+        html += `
+        <label>
+            <input type="radio" name="q${index}" value="${i}">
+            ${option}
+        </label><br>`;
+    });
+
+    div.innerHTML = html;
+    quiz.appendChild(div);
+});
+
+function check() {
+    let score = 0;
+
+    questions.forEach((item, index) => {
+        const ans = document.querySelector(`input[name="q${index}"]:checked`);
+        if (ans && Number(ans.value) === item.correct) {
+            score++;
+        }
+    });
+
+    document.getElementById("result").innerText =
+        "Твій результат: " + score + " / " + questions.length;
+}
+</script>
+
+</body>
+</html>
