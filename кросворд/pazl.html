@@ -1,0 +1,194 @@
+
+<!DOCTYPE html>
+<html lang="uk">
+<head>
+<meta charset="UTF-8">
+<title>Пазл — Місця України</title>
+
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+<script src="https://code.jquery.com/ui/1.13.2/jquery-ui.min.js"></script>
+
+<style>
+body {
+    text-align: center;
+    font-family: Arial;
+}
+
+#board {
+    margin: 20px auto;
+    display: grid;
+}
+
+.cell {
+    border: 1px dashed gray;
+}
+
+#pieces {
+    margin: 20px auto;
+    display: flex;
+    flex-wrap: wrap;
+    max-width: 320px;
+}
+
+.piece {
+    cursor: grab;
+    border: 1px solid black;
+    background-repeat: no-repeat;
+}
+
+#info {
+    margin-top: 20px;
+    font-size: 18px;
+    font-weight: bold;
+}
+</style>
+
+</head>
+
+<body>
+
+<h2>Пазл: Місця України 🇺🇦</h2>
+
+<button id="start">Почати</button>
+<button id="check">Перевірити</button>
+
+<div id="board"></div>
+<div id="pieces"></div>
+<div id="info"></div>
+
+<script>
+let size = 3;
+let pieceSize = 100;
+let currentLevel = 0;
+
+// Назви місць
+let places = [
+    "Карпати — гори на заході України",
+    "Озеро Світязь — найглибше озеро України",
+    "Кам'янець-Подільська фортеця — історична пам'ятка",
+    "Софіївка (Умань) — відомий парк",
+    "Києво-Печерська лавра — монастир",
+    "Хотинська фортеця — оборонна споруда",
+    "Бакота — затоплене місто",
+    "Острів Хортиця — центр козацтва",
+    "Тунель кохання — природний тунель",
+    "Шацькі озера — мальовничі водойми"
+];
+
+$("#start").click(function () {
+    currentLevel = 0;
+    startLevel();
+});
+
+function startLevel() {
+    let boardSize = 300;
+    pieceSize = boardSize / size;
+
+    $("#board").css({
+        width: boardSize,
+        height: boardSize,
+        gridTemplateColumns: `repeat(${size}, 1fr)`
+    });
+
+    createPuzzle();
+}
+
+function createPuzzle() {
+    $("#board").empty();
+    $("#pieces").empty();
+    $("#info").text("");
+
+    let pieces = [];
+
+    for (let y = 0; y < size; y++) {
+        for (let x = 0; x < size; x++) {
+
+            let id = y * size + x;
+
+            $("#board").append(
+                `<div class="cell" data-id="${id}" 
+                style="width:${pieceSize}px;height:${pieceSize}px"></div>`
+            );
+
+            let piece = $(`<div class="piece" data-id="${id}"></div>`);
+
+            piece.css({
+                width: pieceSize,
+                height: pieceSize,
+                backgroundImage: `url('img/${currentLevel}.jpg')`,
+                backgroundSize: `${pieceSize * size}px ${pieceSize * size}px`,
+                backgroundPosition: `-${x * pieceSize}px -${y * pieceSize}px`
+            });
+
+            pieces.push(piece);
+        }
+    }
+
+    pieces.sort(() => Math.random() - 0.5);
+    pieces.forEach(p => $("#pieces").append(p));
+
+    enableDrag();
+}
+
+function enableDrag() {
+    $(".piece").draggable({
+        revert: "invalid",
+        containment: "document",
+        stack: ".piece"
+    });
+
+    $(".cell").droppable({
+        accept: ".piece",
+        drop: function (event, ui) {
+
+            if ($(this).children().length > 0) {
+                $("#pieces").append($(this).children());
+            }
+
+            $(this).append(ui.draggable);
+
+            ui.draggable.css({
+                top: 0,
+                left: 0,
+                position: "relative"
+            });
+        }
+    });
+}
+
+// перевірка
+$("#check").click(function () {
+    let win = true;
+
+    $(".cell").each(function () {
+        let cellId = $(this).data("id");
+        let pieceId = $(this).children().data("id");
+
+        if (cellId != pieceId) {
+            win = false;
+        }
+    });
+
+    if (win) {
+        $("#info").text("✅ " + places[currentLevel]);
+
+        setTimeout(() => {
+            currentLevel++;
+
+            if (currentLevel < places.length) {
+                createPuzzle();
+            } else {
+                $("#info").text("🎉 Ти пройшов всі пазли!");
+            }
+
+        }, 2000);
+
+    } else {
+        alert("❌ Неправильно!");
+    }
+});
+</script>
+
+</body>
+</html>
+
