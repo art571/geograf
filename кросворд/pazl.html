@@ -12,11 +12,26 @@
 body {
     text-align: center;
     font-family: Arial;
+    margin: 10px;
 }
 
+h2 {
+    font-size: 20px;
+}
+
+button {
+    padding: 10px 15px;
+    font-size: 16px;
+    margin: 5px;
+}
+
+/* адаптивне поле */
 #board {
-    margin: 20px auto;
+    margin: 15px auto;
     display: grid;
+    width: 90vw;
+    max-width: 320px;
+    aspect-ratio: 1/1;
 }
 
 .cell {
@@ -24,23 +39,30 @@ body {
 }
 
 #pieces {
-    margin: 20px auto;
+    margin: 10px auto;
     display: flex;
     flex-wrap: wrap;
-    max-width: 320px;
+    justify-content: center;
+    max-width: 340px;
 }
 
 .piece {
-    cursor: grab;
+    cursor: pointer;
     border: 1px solid black;
     background-repeat: no-repeat;
 }
 
+/* вибраний шматок */
+.selected {
+    outline: 3px solid red;
+}
+
 #info {
-    margin-top: 20px;
-    font-size: 18px;
+    margin-top: 15px;
+    font-size: 16px;
     font-weight: bold;
 }
+
 </style>
 
 </head>
@@ -60,19 +82,20 @@ body {
 let size = 3;
 let pieceSize = 100;
 let currentLevel = 0;
+let selectedPiece = null;
 
-// Назви місць
+// місця
 let places = [
     "Карпати — гори на заході України",
     "Озеро Світязь — найглибше озеро України",
-    "Кам'янець-Подільська фортеця — історична пам'ятка",
-    "Софіївка (Умань) — відомий парк",
-    "Києво-Печерська лавра — монастир",
-    "Хотинська фортеця — оборонна споруда",
-    "Бакота — затоплене місто",
-    "Острів Хортиця — центр козацтва",
-    "Тунель кохання — природний тунель",
-    "Шацькі озера — мальовничі водойми"
+    "Кам'янець-Подільська фортеця",
+    "Софіївка (Умань)",
+    "Києво-Печерська лавра",
+    "Хотинська фортеця",
+    "Бакота",
+    "Острів Хортиця",
+    "Тунель кохання",
+    "Шацькі озера"
 ];
 
 $("#start").click(function () {
@@ -81,12 +104,10 @@ $("#start").click(function () {
 });
 
 function startLevel() {
-    let boardSize = 300;
+    let boardSize = $("#board").width();
     pieceSize = boardSize / size;
 
     $("#board").css({
-        width: boardSize,
-        height: boardSize,
         gridTemplateColumns: `repeat(${size}, 1fr)`
     });
 
@@ -97,8 +118,12 @@ function createPuzzle() {
     $("#board").empty();
     $("#pieces").empty();
     $("#info").text("");
+    selectedPiece = null;
 
     let pieces = [];
+
+    let boardSize = $("#board").width();
+    pieceSize = boardSize / size;
 
     for (let y = 0; y < size; y++) {
         for (let x = 0; x < size; x++) {
@@ -106,8 +131,7 @@ function createPuzzle() {
             let id = y * size + x;
 
             $("#board").append(
-                `<div class="cell" data-id="${id}" 
-                style="width:${pieceSize}px;height:${pieceSize}px"></div>`
+                `<div class="cell" data-id="${id}"></div>`
             );
 
             let piece = $(`<div class="piece" data-id="${id}"></div>`);
@@ -120,6 +144,13 @@ function createPuzzle() {
                 backgroundPosition: `-${x * pieceSize}px -${y * pieceSize}px`
             });
 
+            // КЛІК ПО ШМАТКУ (для телефону)
+            piece.click(function () {
+                $(".piece").removeClass("selected");
+                $(this).addClass("selected");
+                selectedPiece = $(this);
+            });
+
             pieces.push(piece);
         }
     }
@@ -127,9 +158,29 @@ function createPuzzle() {
     pieces.sort(() => Math.random() - 0.5);
     pieces.forEach(p => $("#pieces").append(p));
 
-    enableDrag();
+    // КЛІК ПО КЛІТИНЦІ
+    $(".cell").click(function () {
+        if (!selectedPiece) return;
+
+        if ($(this).children().length > 0) {
+            $("#pieces").append($(this).children());
+        }
+
+      $(this).append(selectedPiece);
+
+selectedPiece.css({
+    width: "100%",
+    height: "100%",
+    position: "relative",
+    top: 0,
+    left: 0
+});
+    });
+
+    enableDrag(); // залишили і перетягування
 }
 
+// drag (для компа)
 function enableDrag() {
     $(".piece").draggable({
         revert: "invalid",
