@@ -1,45 +1,83 @@
+
 <!DOCTYPE html>
 <html lang="uk">
 <head>
 <meta charset="UTF-8">
 <title>Кросворд</title>
-
 <style>
-body {
-  font-family: Arial;
-  text-align: center;
-  background: #eee;
-}
+    body {
+        margin: 0;
+        font-family: Arial, sans-serif;
+        text-align: center;
+        background: #eee;
+    }
 
-.grid {
-  display: grid;
-  grid-template-columns: repeat(18, 40px);
-  gap: 2px;
-  justify-content: center;
-  margin-top: 20px;
-}
+    .back-btn {
+        position: fixed;
+        top: 15px;
+        left: 15px;
+        padding: 10px 18px;
+        font-size: 16px;
+        background-color: #007bff;
+        color: white;
+        border: none;
+        border-radius: 10px;
+        cursor: pointer;
+        transition: 0.3s;
+        z-index: 1000;
+    }
 
-.cell {
-  width: 40px;
-  height: 40px;
-  text-align: center;
-  font-size: 20px;
-  text-transform: uppercase;
-}
+    .back-btn:hover {
+        background-color: #0056b3;
+    }
 
-.block {
-  background:none;
-}
+    @media (max-width: 600px) {
+        .back-btn {
+            padding: 8px 14px;
+            font-size: 14px;
+        }
+    }
 
-button {
-  margin-top: 20px;
-  padding: 10px 30px;
-  font-size: 18px;
-}
+    .grid {
+      display: grid;
+      grid-template-columns: repeat(18, 40px);
+      gap: 2px;
+      justify-content: center;
+      margin-top: 20px;
+    }
+
+    .cell {
+      width: 40px;
+      height: 40px;
+      text-align: center;
+      font-size: 20px;
+      text-transform: uppercase;
+    }
+
+    .block {
+      background: none;
+    }
+
+    button {
+      margin-top: 20px;
+      padding: 10px 30px;
+      font-size: 18px;
+    }
+
+    .questions {
+      max-width: 700px;
+      margin: 30px auto;
+      text-align: left;
+      background: white;
+      padding: 20px;
+      border-radius: 10px;
+    }
 </style>
 </head>
 
 <body>
+
+<button class="back-btn" onclick="goBack()">← Назад</button>
 
 <h2>Кросворд 🌍</h2>
 
@@ -47,7 +85,32 @@ button {
 
 <button onclick="check()">Перевірити</button>
 
+<div class="questions">
+<h3>Підказки:</h3>
+<ol>
+  <h1>горизонтально</h1>
+<li>Який материк складається з Північної та Південної частин?</li>
+<li>Як називається сукупність нерівностей земної поверхні?</li>
+<li>Як називається уявна лінія, що ділить Землю на дві півкулі?</li>
+<li>Як називається природна зона з трав’янистою рослинністю і поодинокими деревами?</li>
+<li>Як називається велика брила льоду, що плаває в океані?</li>
+<li>Як називається безлісна холодна природна зона на півночі?</li>
+<li>Як називається область низького тиску з опадами?</li>
+<h1>вертикально</h1>
+<li>Яка країна в Південній Америці відома танго?</li>
+<li>Як називається природний водний потік?</li>
+<li>Як називається тверда оболонка Землі?</li>
+<li>Як називається межа між сушею і водою?</li>
+<li>Як називається водна оболонка Землі?</li>
+<li>Як називається сезонний вітер?</li>
+<li>Яка Найдовша річка?</li>
+</ol>
+</div>
+
 <script>
+function goBack() {
+    window.history.back();
+}
 
 const data = [
 ['А','м','е','р','и','к','а','#','р','е','л','ь','є','ф','#','#','#','#'],
@@ -75,7 +138,6 @@ const data = [
 const grid = document.getElementById("grid");
 let inputs = [];
 
-
 data.forEach((row, rowIndex) => {
   row.forEach((cell, colIndex) => {
     if (cell === '#') {
@@ -87,32 +149,28 @@ data.forEach((row, rowIndex) => {
       const input = document.createElement("input");
       input.maxLength = 1;
       input.className = "cell";
-      
-      // Зберігаємо координати прямо в об'єкті інпуту для зручності
+
       input.dataset.row = rowIndex;
       input.dataset.col = colIndex;
 
       input.addEventListener("input", () => {
         input.value = input.value.toUpperCase();
-        
+
         if (input.value.length === 1) {
           const r = parseInt(input.dataset.row);
           const c = parseInt(input.dataset.col);
 
-          // 1. Перевіряємо клітинку праворуч (той же рядок, наступна колонка)
           let nextRow = r;
           let nextCol = c + 1;
-          let nextIndex = nextRow * 18 + nextCol;
 
-          // Якщо праворуч стіна або кінець поля, перевіряємо клітинку знизу
           if (nextCol >= 18 || data[nextRow][nextCol] === '#') {
             nextRow = r + 1;
             nextCol = c;
-            nextIndex = nextRow * 18 + nextCol;
           }
 
-          // Якщо знайшли куди йти і там не блок '#' — фокусуємося
-          if (nextRow < data.length && nextCol < 18 && inputs[nextIndex]) {
+          let nextIndex = nextRow * 18 + nextCol;
+
+          if (inputs[nextIndex]) {
             inputs[nextIndex].focus();
           }
         }
@@ -123,9 +181,10 @@ data.forEach((row, rowIndex) => {
     }
   });
 });
+
 function check() {
   let i = 0;
-  let allCorrect = true; // Припускаємо, що все вірно
+  let allCorrect = true;
 
   data.forEach(row => {
     row.forEach(cell => {
@@ -137,10 +196,9 @@ function check() {
           inputs[i].style.background = "lightgreen";
         } else {
           inputs[i].style.background = "salmon";
-          allCorrect = false; // Якщо хоч одна літера невірна
+          allCorrect = false;
         }
-        
-        // Додаткова перевірка на порожнє поле
+
         if (userInput === "") {
           allCorrect = false;
         }
@@ -149,15 +207,10 @@ function check() {
     });
   });
 
-  // Якщо після перевірки всіх клітинок помилок немає
   if (allCorrect) {
     alert("Вітаю! Ти красава! 🎉");
   }
 }
-
-
-
-
 </script>
 
 </body>
